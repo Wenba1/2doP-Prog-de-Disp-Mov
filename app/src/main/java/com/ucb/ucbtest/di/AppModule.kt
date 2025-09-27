@@ -3,6 +3,7 @@ package com.ucb.ucbtest.di
 import android.content.Context
 import com.ucb.data.GithubRepository
 import com.ucb.data.LoginRepository
+import com.ucb.data.MovieLikeRepository
 import com.ucb.data.MovieRepository
 import com.ucb.data.PushNotificationRepository
 import com.ucb.data.RealDatabaseRepository
@@ -10,6 +11,7 @@ import com.ucb.data.datastore.ILoginDataStore
 import com.ucb.data.dollar.IRealDatabaseDataSource
 import com.ucb.data.git.IGitRemoteDataSource
 import com.ucb.data.git.ILocalDataSource
+import com.ucb.data.movie.IMovieLikeLocalDataSource
 import com.ucb.data.movie.IMovieRemoteDataSource
 import com.ucb.data.push.IPushDataSource
 import com.ucb.framework.github.GithubLocalDataSource
@@ -29,10 +31,13 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import com.ucb.framework.datastore.LoginDataSource
 import com.ucb.framework.dollar.FirebaseRealDatabase
+import com.ucb.framework.movie.MovieLikeLocalDataSource
 import com.ucb.framework.push.FirebaseNotificationDataSource
 import com.ucb.usecases.DoDollarUpdate
 import com.ucb.usecases.GetEmailKey
+import com.ucb.usecases.GetLikedMovies
 import com.ucb.usecases.ObtainToken
+import com.ucb.usecases.SetMovieLike
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -153,4 +158,21 @@ object AppModule {
     fun provideRealDatabaseDataSource(): IRealDatabaseDataSource {
         return FirebaseRealDatabase()
     }
+
+    @Provides @Singleton
+    fun provideMovieLikeLocalDataSource(
+        @ApplicationContext context: Context
+    ): IMovieLikeLocalDataSource = MovieLikeLocalDataSource(context)
+
+    @Provides @Singleton
+    fun provideMovieLikeRepository(local: IMovieLikeLocalDataSource): MovieLikeRepository =
+        MovieLikeRepository(local)
+
+    @Provides @Singleton
+    fun provideSetMovieLikeUseCase(repo: MovieLikeRepository): SetMovieLike =
+        SetMovieLike(repo)
+
+    @Provides @Singleton
+    fun provideGetLikedMoviesUseCase(repo: MovieLikeRepository): GetLikedMovies =
+        GetLikedMovies(repo)
 }

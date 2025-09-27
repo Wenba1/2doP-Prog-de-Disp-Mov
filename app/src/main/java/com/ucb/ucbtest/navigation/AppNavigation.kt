@@ -27,7 +27,7 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.DollarScreen.route,
+        startDestination = Screen.MoviesScreen.route,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
@@ -65,12 +65,18 @@ fun AppNavigation() {
 
         composable(Screen.MoviesScreen.route) {
 
-            MoviesUI( onSuccess = {
-                movie ->
-                    val movieJson = Json.encodeToString(movie)
-                    val encodeMovieJson = URLEncoder.encode(movieJson, "UTF-8")
-                    navController.navigate("${Screen.MovieDetailScreen.route}/$encodeMovieJson")
-            })
+            MoviesUI( onSuccess = { item ->
+                val movie = Movie( // tu data class de dominio
+                    title = item.title,
+                    posterPath = item.posterPath,
+                    overview = item.overview
+                    // …otros campos si aplica
+                )
+                val movieJson = Json.encodeToString(movie)
+                val encodeMovieJson = URLEncoder.encode(movieJson, "UTF-8")
+                navController.navigate("${Screen.MovieDetailScreen.route}/$encodeMovieJson")
+            }
+            )
         }
 
         composable(

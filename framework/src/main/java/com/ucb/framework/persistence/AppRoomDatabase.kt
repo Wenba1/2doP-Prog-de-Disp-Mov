@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [GitAccount::class], version = 1, exportSchema = false)
+/*@Database(entities = [GitAccount::class], version = 1, exportSchema = false)
 abstract class AppRoomDatabase : RoomDatabase() {
     abstract fun githubDao(): IGitAccountDAO
 
@@ -24,3 +24,26 @@ abstract class AppRoomDatabase : RoomDatabase() {
     }
 }
 
+*/
+
+@Database(entities = [GitAccount::class, MovieLike::class], version = 2, exportSchema = false)
+abstract class AppRoomDatabase : RoomDatabase() {
+    abstract fun githubDao(): IGitAccountDAO
+    abstract fun movieLikeDao(): IMovieLikeDAO
+
+    companion object {
+        @Volatile var Instance: AppRoomDatabase? = null
+        fun getDatabase(context: Context): AppRoomDatabase {
+            return Instance ?: synchronized(this) {
+                Room.databaseBuilder(
+                    context.applicationContext,
+                    AppRoomDatabase::class.java,
+                    "github_database"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { Instance = it }
+            }
+        }
+    }
+}
