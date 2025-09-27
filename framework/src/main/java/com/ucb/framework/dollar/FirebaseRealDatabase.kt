@@ -57,7 +57,12 @@ class FirebaseRealDatabase: IRealDatabaseDataSource {
                    ?: snap.child("venta_par").getValue(Long::class.java)?.toDouble()
                    ?: 0.0
 
-               trySend("Compra Oficial: $oficial • Compra Paralelo: $paralelo • Venta Oficial: $venta_of • Venta Paralelo: $venta_par")
+               trySend(
+                   "Compra Oficial: $oficial\n" +
+                           "Compra Paralelo: $paralelo\n" +
+                           "Venta Oficial: $venta_of\n" +
+                           "Venta Paralelo: $venta_par"
+               )
            }
 
            override fun onCancelled(error: DatabaseError) {
